@@ -71,7 +71,7 @@ class InputOutputTest {
 			System.out.println(file.getCanonicalFile().getName());			
 			printDirectory(file.listFiles(), maxLevel, 1);
 		}
-		
+		 
 		
 		
 		

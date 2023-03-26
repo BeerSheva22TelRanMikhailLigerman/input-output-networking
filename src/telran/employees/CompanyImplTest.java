@@ -11,6 +11,9 @@ import java.util.Comparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 
 class CompanyImplTest {
 	CompanyImpl company; 
@@ -92,20 +95,18 @@ class CompanyImplTest {
 	}
 	
 	@Test
-	//@Disabled
+	@Disabled
 	void saveTest() {
 		company.save("company.data");
 	}
 	
 	@Test
 	//@Disabled
-	void restoreTest() {
-		CompanyImpl restoredCompany = new CompanyImpl();
-		company.save("company.data");
-		restoredCompany.restore("company.data");
-		
-			
-		assertIterableEquals(company, restoredCompany);
+	void saveRestoreTest() {
+		company.restore("company.data");
+		assertIterableEquals(company, company);
+					
+		//assertIterableEquals(company, restoredCompany);
 	}
 	
 

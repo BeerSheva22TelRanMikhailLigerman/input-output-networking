@@ -70,7 +70,7 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getAllEmployees() {		
-		return new ArrayList(employeesMap.values());
+		return new ArrayList<>(employeesMap.values());
 	}
 
 	@Override
@@ -113,6 +113,12 @@ public class CompanyImpl implements Company {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Override
+	public boolean isEquals(Company comp) {
+		//TODO
+		return false;
 	}
 	
 	

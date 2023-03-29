@@ -1,11 +1,28 @@
 package telran.net.application;
 import java.io.*;
 import java.net.*;
+
+import telran.net.TcpServer;
+import telran.net.UdpServer;
 public class ServerTcpExampleAppl {
 
 	private static final int PORT = 4000;
-
 	public static void main(String[] args) throws Exception{
+		UdpServer server = new UdpServer(PORT, new ExampleProtocol());
+		server.run();
+	}
+}
+	
+/*	
+//for test HW41 with Protocol by Tcp
+	public static void main(String[] args) throws Exception{
+		TcpServer server = new TcpServer(new ExampleProtocol(), PORT);
+		server.run();
+	}
+}
+*/
+
+/*	old simple solution before using Protocol:
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("server listening on port " + PORT );
 		while(true) {
@@ -46,5 +63,5 @@ public class ServerTcpExampleAppl {
 		}
 		return res;
 	}
-
 }
+*/

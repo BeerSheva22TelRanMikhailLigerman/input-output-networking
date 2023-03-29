@@ -22,6 +22,6 @@ Employee getEmployee(long id);
 void save(String pathName); //save all employee objects
 void restore(String pathName); //restore all employee objects
 
-boolean isEquals(Company comp);
+
 
 }

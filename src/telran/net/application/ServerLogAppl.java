@@ -1,108 +1,102 @@
 package telran.net.application;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.HashMap;
-
 import telran.util.Level;
+import java.io.*;
+import java.net.*;
+
 
 public class ServerLogAppl {
-	public static final String OK = "ok";
-	public static final int PORT = 3000;
-	public static final String LOG_TYPE = "log";
-	public static final String COUNTER_TYPE = "counter";
-	private static final String WRONG_LEVEL_MESSAGE = "Wrong Level in logger record";	
 	
-	static HashMap<Level, Integer> logLevelCounters = new HashMap<>();
-	
+static HashMap<String, Integer> logCounters = new HashMap<>();
+
+public static final String OK = "ok";
+public static final int PORT = 3000;
+public static final String LOG_TYPE = "log";
+public static final String COUNTER_TYPE = "counter";
+private static final String WRONG_LEVEL = "Wrong Level in logger record";
 	public static void main(String[] args) throws Exception{
-		try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-			System.out.println("server listening on port " + PORT );
-			while(true) {
-				Socket socket = serverSocket.accept();
-				try {
-					runServerClient(socket);
-				} catch (IOException e) {
-					System.out.println("abnormal closing connection");
-				}
-			}
-		}
-
-	}
-
-	private static void runServerClient(Socket socket) throws IOException  {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		PrintStream writer = new PrintStream(socket.getOutputStream());
+		ServerSocket serverSocket = new ServerSocket(PORT);
+		System.out.println("Logger Server is listening on port " + PORT);
 		while(true) {
-			String request = reader.readLine();
-			if (request == null) {
-				break;
-			}
-			String response = getResponse(request);
-			writer.println(response);
+			Socket socket = serverSocket.accept();
+			runProtocol(socket);
 		}
-		
-	}
-	
 
+	}
+	private static void runProtocol(Socket socket) {
+		try {
+			BufferedReader input = 	new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintStream output = new PrintStream(socket.getOutputStream());
+			while(true) {
+				String request = input.readLine();
+				if (request == null) {
+					break;
+				}
+				String response = getResponse(request);
+				output.println(response);
+
+			}
+		} catch (IOException e) {
+			System.out.println("client has closed connection improperly");
+		}
+
+
+	}
 	private static String getResponse(String request) {
-		String res = "Wrong Request";
-		String tokens[] = request.split("#");
-		if (tokens.length == 2) {
-			res = switch(tokens[0]) {
-			case LOG_TYPE -> processingLog(tokens[1]);
-			case COUNTER_TYPE -> processingCounterRequest(tokens[1]); 
+		String[] tokens = request.split("#");
+		String response = "";
+		if (tokens.length != 2) {
+			response = "Wrong request: should be <type>#<string>";
+		} else {
+			response = switch(tokens[0]) {
+			case LOG_TYPE -> processLogRequest(tokens[1]);
+			case COUNTER_TYPE -> processCounterRequest(tokens[1]); 
 			default -> String.format("Wrong request type: should be either %s or %s", LOG_TYPE, COUNTER_TYPE);
 			};
 		}
-		return res;
-	}
-
-	private static String processingCounterRequest(String logMessage) {
 		
-		return logLevelCounters.get(getLevel(logMessage)).toString();
+		return response;
 	}
+	private static String processCounterRequest(String requestData) {
 
-	private static String processingLog(String logMessage) {
-		Level level = getLevel(logMessage);
-		String res = WRONG_LEVEL_MESSAGE;
+		return "" + logCounters.getOrDefault(requestData.toUpperCase(), 0);
+	}
+	private static String processLogRequest(String requestData) {
+		Level level = getLevel(requestData);
+		String res = WRONG_LEVEL;
 		if (level != null) {
 			res = OK;
-			//{
-			if (!logLevelCounters.containsKey(level)) {
-				logLevelCounters.put(level, 1);
-			} else {
-				int newValue = logLevelCounters.get(level) +1;
-				logLevelCounters.put(level, newValue);
-			}
+			logCounters.merge(level.toString(), 1, (a,b) -> a + b);
+			//or
+			//logLevelCounters.merge(level, 1, Integer::sum);
+			//or simple code			
+			//if (!logLevelCounters.containsKey(level)) {
+			//	logLevelCounters.put(level, 1);
+			//} else {
+			//	int newValue = logLevelCounters.get(level) +1;
+			//	logLevelCounters.put(level, newValue);
 			//}
-			// more simple code fore {}:
-			//logLevelCounters.merge(level, 1, (a,b) -> a + b);
+
 		}
 		return res;
-		
 	}
-
-	private static Level getLevel(String logString) {
+	private static Level getLevel(String requestData) {
 		Level levels[] = Level.values();
-		boolean levelFound = false;
-		int level = 0;
-		for (int i = 0; i < levels.length; i++) {
-			if (logString.contains((levels[i]).toString())) {
-				levelFound = true;
-				level = i;
-			}
-		}		
-		return levelFound ? levels[level] : null;
+		int index = 0;
+		while(index < levels.length && !requestData.contains(levels[index].toString())) {
+			index++;
+		}
+		return index < levels.length ? levels[index] : null;
 	}
-	// more simple code:
-	//int index = 0;		
-	//while(index < levels.length && !logString.contains(levels[index].toString())) {
-	//index++;	}
-			
+	//or my simple code
+	//boolean levelFound = false;
+	//int level = 0;
+	//for (int i = 0; i < levels.length; i++) {
+	//	if (logString.contains((levels[i]).toString())) {
+	//		levelFound = true;
+	//		level = i;
+	//	}
+	//}		
+	//return levelFound ? levels[level] : null;
 }
-

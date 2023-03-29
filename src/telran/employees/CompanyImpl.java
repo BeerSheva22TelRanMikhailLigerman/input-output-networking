@@ -5,122 +5,96 @@ import java.util.*;
 //HW39
 public class CompanyImpl implements Company {
 	private static final long serialVersionUID = 1L;
+	private HashMap<Long, Employee> employees = new HashMap<>();
+	private HashMap<Integer, Set<Employee>> employeesMonth = new HashMap<>();
+	private HashMap<String, Set<Employee>> employeesDepartment = new HashMap<>();
+	private TreeMap<Integer, Set<Employee>> employeesSalary = new TreeMap<>();
 	
-	private HashMap<Long, Employee> employeesMap = new HashMap<Long, Employee>();
-	private HashMap<Integer, Set<Employee>> monthBirthMap = new HashMap<Integer, Set<Employee>>();
-	private HashMap<String, Set<Employee>> departmentMap = new HashMap<String, Set<Employee>>();
-	private TreeMap<Integer, Set<Employee>> salaryTree = new TreeMap<Integer, Set<Employee>>();
-	
-
 	@Override
-	public Iterator<Employee> iterator() {		
+	public Iterator<Employee> iterator() {
+		
 		return getAllEmployees().iterator();
 	}
-
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res = false;
-		if (employeesMap.putIfAbsent(empl.id, empl) == null) {
-			fillAnotherCollections(empl);
+		if (employees.putIfAbsent(empl.id, empl) == null) {
 			res = true;
+			addIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
+			addIndexMap(employeesDepartment, empl.getDepartment(), empl);
+			addIndexMap(employeesSalary, empl.getSalary(), empl);
 		}
+		
 		return res;
 	}
-
-	private void fillAnotherCollections(Employee empl) {
-		addToMonthBirthMap(empl);
-		addToDepartmentMap(empl);
-		addToSalaryTree(empl);
+	private <T> void addIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
+		map.computeIfAbsent(key, k->new HashSet<>()).add(empl);
 		
 	}
-
-	private void addToSalaryTree(Employee empl) {
-		if (!salaryTree.containsKey(empl.salary)) {
-			salaryTree.put(empl.salary, new HashSet<Employee>()) ;
-		} 
-		salaryTree.get(empl.salary).add(empl);		
-	}
-
-	private void addToDepartmentMap(Employee empl) {
-		if (!departmentMap.containsKey(empl.department)) {
-			departmentMap.put(empl.department, new HashSet<Employee>()) ;
-		} 
-		departmentMap.get(empl.department).add(empl);		
-	}	
-
-	private void addToMonthBirthMap(Employee empl) {
-		int monthBirth = empl.birthDate.getMonthValue();
-		if (!monthBirthMap.containsKey(monthBirth)) {
-			monthBirthMap.put(monthBirth, new HashSet<Employee>()) ;
-		} 
-		monthBirthMap.get(monthBirth).add(empl);		
-	}
-
 	@Override
 	public Employee removeEmployee(long id) {
-		Employee delEmpl = employeesMap.remove(id);
-		
-		if (delEmpl != null) {
-			departmentMap.get(delEmpl.department).remove(delEmpl);
-			monthBirthMap.get(delEmpl.birthDate.getMonthValue()).remove(delEmpl);
-			salaryTree.get(delEmpl.salary).remove(delEmpl);
+		Employee empl = employees.remove(id); 
+		if (empl != null) {
+			removeIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
+			removeIndexMap(employeesDepartment, empl.getDepartment(), empl);
+			removeIndexMap(employeesSalary, empl.getSalary(), empl);
 		}
-		return delEmpl;
+		return empl;
 	}
 
+	private <T>void removeIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
+		Set<Employee> set = map.get(key);
+		set.remove(empl);
+		if (set.isEmpty()) {    
+			map.remove(key);
+		}
+		
+	}
 	@Override
-	public List<Employee> getAllEmployees() {		
-		return new ArrayList<>(employeesMap.values());
+	public List<Employee> getAllEmployees() {
+		
+		return new ArrayList<>(employees.values());
 	}
-
 	@Override
-	public List<Employee> getEmployeesByMonthBirth(int month) {		
-		return new ArrayList<>(monthBirthMap.getOrDefault(month, Collections.emptySet()));
+	public List<Employee> getEmployeesByMonthBirth(int month) {
+		
+		return new ArrayList<>(employeesMonth.getOrDefault(month, Collections.emptySet()));
 	}
-
 	@Override
-	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {		
-		return  salaryTree.subMap(salaryFrom, true, salaryTo, true).values().stream().flatMap(Set::stream).toList();
+	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
+		
+		return employeesSalary.subMap(salaryFrom, true, salaryTo, true)
+				.values().stream().flatMap(Set::stream).toList();
 	}
-
 	@Override
-	public List<Employee> getEmployeesByDepartment(String department) {		
-		return new ArrayList<>(departmentMap.getOrDefault(department, Collections.emptySet())) ; 
+	public List<Employee> getEmployeesByDepartment(String department) {
+		
+		return new ArrayList<>(employeesDepartment.getOrDefault(department, Collections.emptySet()));
 	}
-
 	@Override
-	public Employee getEmployee(long id) {		
-		return employeesMap.get(id);
+	public Employee getEmployee(long id) {
+		
+		return employees.get(id);
 	}
-
 	@Override
 	public void save(String pathName) {
 		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(pathName))){
-			output.writeObject(employeesMap);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			output.writeObject(getAllEmployees());
+		} catch(Exception e) {
+			throw new RuntimeException(e.toString()); //some error
 		}
-
 	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restore(String pathName) {
-		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(pathName))){
-			employeesMap = (HashMap<Long, Employee>) input.readObject();
-			employeesMap.values().stream().forEach(empl -> fillAnotherCollections(empl)); 
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(pathName))) {
+			List<Employee> allEmployees = (List<Employee>) input.readObject();
+			allEmployees.forEach(this::addEmployee);
+		}catch(FileNotFoundException e) {
+			//empty object but no error
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e.toString()); //some error
 		}
-
 	}
 	
-	@Override
-	public boolean isEquals(Company comp) {
-		//TODO
-		return false;
-	}
-	
-	
-
 }

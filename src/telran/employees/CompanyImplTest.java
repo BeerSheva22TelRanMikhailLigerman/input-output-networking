@@ -11,9 +11,6 @@ import java.util.Comparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
 
 class CompanyImplTest {
 	CompanyImpl company; 
@@ -28,7 +25,7 @@ class CompanyImplTest {
 		company.addEmployee(Petya);
 		company.addEmployee(Masha);
 	}	
-	
+
 	@Test
 	//@Disabled
 	void addRemoveTest() {		
@@ -37,14 +34,14 @@ class CompanyImplTest {
 		assertNull(company.removeEmployee(1));
 		assertTrue(company.addEmployee(Vasa));			
 	}
-	
+
 	@Test
 	//@Disabled
 	void getAmployeeTest() {
 		assertEquals(Vasa, company.getEmployee(1));
 		assertNull(company.getEmployee(4));
 	}
-	
+
 	@Test
 	//@Disabled
 	void getEmployeesByMonthBirthTest() {
@@ -52,11 +49,11 @@ class CompanyImplTest {
 		Employee[] actual = company.getEmployeesByMonthBirth(1).toArray(Employee[]::new);		
 		Arrays.sort(actual, Comparator.comparing(Employee::getName));
 		assertArrayEquals(expected, actual);
-		
+
 		assertTrue(company.getEmployeesByMonthBirth(3).isEmpty());
-		
+
 	}
-	
+
 	@Test
 	//@Disabled
 	void getAllEmployeeTest() {
@@ -67,8 +64,8 @@ class CompanyImplTest {
 		assertEquals(Vasa, company.getEmployee(1));
 		assertNull(company.getEmployee(4));
 	}
-	
-		
+
+
 	@Test
 	//@Disabled
 	void getEmployeesBySalaryTest() {
@@ -77,7 +74,7 @@ class CompanyImplTest {
 		Arrays.sort(actual, Comparator.comparing(Employee::getName));
 		assertArrayEquals(expected, actual);
 	}
-	
+
 	@Test 
 	//@Disabled
 	void getEmployeesByDepartmentTest(){
@@ -85,29 +82,31 @@ class CompanyImplTest {
 		Employee[] actual = company.getEmployeesByDepartment("programmers").toArray(Employee[]::new);
 		Arrays.sort(actual, Comparator.comparing(Employee::getName));
 		assertArrayEquals(expected, actual);
-		
+
 		company.removeEmployee(1);
 		expected = new Employee[] {Petya};
 		actual = company.getEmployeesByDepartment("programmers").toArray(Employee[]::new);
 		assertArrayEquals(expected, actual);		
-		
+
 		assertTrue(company.getEmployeesByDepartment("emptyDep").isEmpty());
 	}
-	
+
 	@Test
-	@Disabled
+	//@Disabled
 	void saveTest() {
 		company.save("company.data");
 	}
-	
+
 	@Test
 	//@Disabled
-	void saveRestoreTest() {
-		company.restore("company.data");
-		assertIterableEquals(company, company);
-					
-		//assertIterableEquals(company, restoredCompany);
+	void restoreTest() {
+		CompanyImpl restoredCompany = new CompanyImpl();
+		company.save("company.data");
+		restoredCompany.restore("company.data");
+
+
+		assertIterableEquals(company, restoredCompany);
 	}
-	
+
 
 }

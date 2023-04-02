@@ -11,6 +11,4 @@ public class Request implements Serializable {
 		this.type = type;
 		this.data = data;
 	}
-
-
 }

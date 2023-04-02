@@ -35,6 +35,4 @@ public TcpClient(String hostname, int port) throws Exception{
 		}
 		return res;
 	}
-
-
 }

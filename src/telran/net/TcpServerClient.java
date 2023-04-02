@@ -31,7 +31,5 @@ public TcpServerClient(Socket socket, Protocol protocol) throws IOException {
 				throw new RuntimeException(e.toString());
 			}
 		}
-
 	}
-
 }

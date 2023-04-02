@@ -46,19 +46,16 @@ static void createLogger() throws Exception {
 		sendMessage(N_DEBUGS, i -> logger.debug("message" + i));
 		sendMessage(N_TRACES, i -> logger.trace("message" + i));
 		logHandler.close();
-
 	}
 
 	private void sendMessage(int nSendings, IntConsumer consumer) {
 		IntStream.range(0, nSendings).forEach(consumer);
 	}
-	@Test
-	//@Disabled
+	@Test	
 	void counterErrorTest() throws Exception {
 		runCounterTest("ERROR", N_ERRORS);
 	}
-	@Test
-	//@Disabled
+	@Test	
 	void counterWarnTest() throws Exception {
 		runCounterTest("WARN", N_WARNS);
 	}
@@ -68,25 +65,20 @@ static void createLogger() throws Exception {
 		assertEquals(nLogs , actual);
 
 	}
-	@Test
-	//@Disabled
+	@Test	
 	void counterInfoTest() throws Exception {
 		runCounterTest("INFO", N_INFOS);
 	}
-	@Test
-	//@Disabled
+	@Test	
 	void counterDebugTest() throws Exception {
 		runCounterTest("DEBUG", N_DEBUGS);
 	}
-	@Test
-	//@Disabled
+	@Test	
 	void counterTraceTest() throws Exception {
 		runCounterTest("TRACE", N_TRACES);
 	}
-	@AfterAll
-	//@Disabled
+	@AfterAll	
 	static void closing () throws IOException {
 		socket.close();
 	}
-
 }

@@ -1,9 +1,10 @@
 package telran.employees;
 
-import java.io.*;
 import java.util.*;
-//HW39
+import java.io.*;
+
 public class CompanyImpl implements Company {
+	
 	private static final long serialVersionUID = 1L;
 	private HashMap<Long, Employee> employees = new HashMap<>();
 	private HashMap<Integer, Set<Employee>> employeesMonth = new HashMap<>();
@@ -11,10 +12,10 @@ public class CompanyImpl implements Company {
 	private TreeMap<Integer, Set<Employee>> employeesSalary = new TreeMap<>();
 	
 	@Override
-	public Iterator<Employee> iterator() {
-		
+	public Iterator<Employee> iterator() {		
 		return getAllEmployees().iterator();
 	}
+
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res = false;
@@ -23,14 +24,14 @@ public class CompanyImpl implements Company {
 			addIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
 			addIndexMap(employeesDepartment, empl.getDepartment(), empl);
 			addIndexMap(employeesSalary, empl.getSalary(), empl);
-		}
-		
+		}		
 		return res;
 	}
+
 	private <T> void addIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
-		map.computeIfAbsent(key, k->new HashSet<>()).add(empl);
-		
+		map.computeIfAbsent(key, k->new HashSet<>()).add(empl);		
 	}
+
 	@Override
 	public Employee removeEmployee(long id) {
 		Employee empl = employees.remove(id); 
@@ -45,37 +46,37 @@ public class CompanyImpl implements Company {
 	private <T>void removeIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
 		Set<Employee> set = map.get(key);
 		set.remove(empl);
-		if (set.isEmpty()) {    
+		if (set.isEmpty()) {
 			map.remove(key);
-		}
-		
+		}		
 	}
+
 	@Override
-	public List<Employee> getAllEmployees() {
-		
+	public List<Employee> getAllEmployees() {		
 		return new ArrayList<>(employees.values());
 	}
+
 	@Override
-	public List<Employee> getEmployeesByMonthBirth(int month) {
-		
+	public List<Employee> getEmployeesByMonthBirth(int month) {		
 		return new ArrayList<>(employeesMonth.getOrDefault(month, Collections.emptySet()));
 	}
+
 	@Override
-	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-		
+	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {		
 		return employeesSalary.subMap(salaryFrom, true, salaryTo, true)
 				.values().stream().flatMap(Set::stream).toList();
 	}
+
 	@Override
-	public List<Employee> getEmployeesByDepartment(String department) {
-		
+	public List<Employee> getEmployeesByDepartment(String department) {		
 		return new ArrayList<>(employeesDepartment.getOrDefault(department, Collections.emptySet()));
 	}
+
 	@Override
-	public Employee getEmployee(long id) {
-		
+	public Employee getEmployee(long id) {		
 		return employees.get(id);
 	}
+
 	@Override
 	public void save(String pathName) {
 		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(pathName))){
@@ -84,6 +85,7 @@ public class CompanyImpl implements Company {
 			throw new RuntimeException(e.toString()); //some error
 		}
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void restore(String pathName) {
@@ -96,5 +98,4 @@ public class CompanyImpl implements Company {
 			throw new RuntimeException(e.toString()); //some error
 		}
 	}
-	
 }

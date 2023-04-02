@@ -2,7 +2,7 @@ package telran.view;
 
 import java.util.Scanner;
 
-public class StandartInputOutput implements InputOutput {
+public class StandardInputOutput implements InputOutput {
 	Scanner scanner = new Scanner(System.in);
 
 	@Override
@@ -14,8 +14,5 @@ public class StandartInputOutput implements InputOutput {
 	@Override
 	public void writeString(Object obj) {
 		System.out.print(obj.toString());
-
 	}
-	
-
 }

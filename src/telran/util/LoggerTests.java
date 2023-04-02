@@ -92,5 +92,4 @@ void setUp() throws FileNotFoundException {
 		IntStream.range(0, levels.length).forEach(i -> assertTrue(records.get(i).contains(levels[i])));
 
 	}
-
 }

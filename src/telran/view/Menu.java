@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class Menu implements Item {
+	
 	private static final int STARS_AMOUNT = 25;
 	private String name;
 	private ArrayList<Item> items;
@@ -40,7 +41,7 @@ public class Menu implements Item {
 		} catch (Exception e) {
 			io.writeLine(e.getMessage());
 		}
-		io.writeLine("Thanks & Goodbye");
+		//io.writeLine("Thanks & Goodbye");
 
 	}
 
@@ -59,5 +60,4 @@ public class Menu implements Item {
 	public boolean isExit() {
 		return false;
 	}
-
 }

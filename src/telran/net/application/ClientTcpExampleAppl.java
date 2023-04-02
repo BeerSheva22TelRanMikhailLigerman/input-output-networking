@@ -11,6 +11,7 @@ public static void main(String[] args) throws Exception {
 	Socket socket = new Socket(HOSTNAME, PORT);
 	PrintStream writer = new PrintStream(socket.getOutputStream());
 	BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	
 	runClient(socket, writer, reader);
 }
 

@@ -13,8 +13,8 @@ public class TcpClientHandler implements Handler {
 	Socket socket;
 	PrintStream stream;
 	BufferedReader input;
+	
 	public TcpClientHandler(String hostName, int port) {
-
 		try {
 			socket = new Socket(hostName, port);
 			stream = new PrintStream(socket.getOutputStream());
@@ -23,8 +23,6 @@ public class TcpClientHandler implements Handler {
 			throw new RuntimeException(e.toString());
 		}
 	}
-
-
 
 	@Override
 	public void publish(LoggerRecord loggerRecord) {
@@ -42,7 +40,6 @@ public class TcpClientHandler implements Handler {
 			new RuntimeException(e.getMessage());
 		}
 
-
 	}
 	@Override
 	public void close() {
@@ -52,6 +49,4 @@ public class TcpClientHandler implements Handler {
 			throw new RuntimeException("not closed " + e.getMessage());
 		}
 	}
-
-
 }

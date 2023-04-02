@@ -49,6 +49,4 @@ public class Logger {
 	public void trace(String message) {
 		publising(message, Level.TRACE);
 	}
-	
-
 }

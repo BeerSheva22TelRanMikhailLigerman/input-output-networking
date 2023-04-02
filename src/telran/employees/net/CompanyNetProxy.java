@@ -13,36 +13,32 @@ public class CompanyNetProxy implements Company, Closeable {
 
 	NetworkClient client;
 	private static final long serialVersionUID = 1L;
+	
 	public CompanyNetProxy(NetworkClient client) {
 		this.client = client;
 	}
 	@Override
-	public Iterator<Employee> iterator() {
-		
+	public Iterator<Employee> iterator() {		
 		return getAllEmployees().iterator();
 	}
 
 	@Override
-	public boolean addEmployee(Employee empl) {
-		
+	public boolean addEmployee(Employee empl) {		
 		return client.send("addEmployee", empl);
 	}
 
 	@Override
-	public Employee removeEmployee(long id) {
-		
+	public Employee removeEmployee(long id) {		
 		return client.send("removeEmployee", id);
 	}
 
 	@Override
-	public List<Employee> getAllEmployees() {
-		
+	public List<Employee> getAllEmployees() {		
 		return client.send("getAllEmployees", "");
 	}
 
 	@Override
-	public List<Employee> getEmployeesByMonthBirth(int month) {
-		
+	public List<Employee> getEmployeesByMonthBirth(int month) {		
 		return client.send("getEmployeesByMonthBirth", month);
 	}
 

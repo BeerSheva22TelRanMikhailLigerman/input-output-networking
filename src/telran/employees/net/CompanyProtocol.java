@@ -31,8 +31,7 @@ public class CompanyProtocol implements Protocol {
 			return new Response(ResponseCode.WRONG_DATA, e.toString());
 		}
 	}
-	private Response getResponseData(Serializable data) {
-		
+	private Response getResponseData(Serializable data) {		
 		return new Response(ResponseCode.OK, data);
 	}
 	Serializable addEmployee(Serializable data) {

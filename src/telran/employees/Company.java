@@ -19,6 +19,9 @@ List<Employee> getEmployeesByDepartment(String department);
 
 Employee getEmployee(long id);
 
+void updateSalary(long emplId, int newSalary);
+void updateDepartment(long emplId, String department);
+
 void save(String pathName); //save all employee objects
 void restore(String pathName); //restore all employee objects
 

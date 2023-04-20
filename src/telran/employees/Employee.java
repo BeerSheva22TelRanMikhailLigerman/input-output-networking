@@ -39,6 +39,13 @@ public class Employee implements Serializable, Comparable<Employee>{
 	public LocalDate getBirthDate() {
 		return birthDate;
 	}
+	
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

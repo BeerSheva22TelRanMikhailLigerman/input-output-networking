@@ -1,4 +1,4 @@
-package telran.employees.net;
+ package telran.employees.net;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,6 +25,8 @@ public class CompanyProtocol implements Protocol {
 		case "getEmployee" -> getResponseData(getEmployee(request.data));
 		case "save" -> getResponseData(save(request.data));
 		case "restore" -> getResponseData(retsore(request.data));
+		case "updateSalary" -> getResponseData(updateSalary(request.data));
+		case "updateDepartment" -> getResponseData(updateDepartment(request.data));
 		default -> new Response(ResponseCode.WRONG_REQUEST, request.type + " Request type not found");
 		};
 		}catch (Throwable e) {
@@ -71,6 +73,23 @@ public class CompanyProtocol implements Protocol {
 		company.restore(filePath);
 		return "";
 	}
+	Serializable updateSalary(Serializable data) {
+		Object[] newData = (Object[]) data; 
+		long id = (long) newData[0];
+		int newSalary = (int) newData[1];
+		company.updateSalary(id, newSalary);
+		return "";
+	}
+	
+	Serializable updateDepartment(Serializable data) {
+		Object[] newData = (Object[]) data; 
+		long id = (long) newData[0];
+		String department = (String) newData[1];
+		company.updateDepartment(id, department);
+		return "";
+	}
+	
+	
 	public CompanyProtocol(Company company) {
 		this.company = company;
 	}

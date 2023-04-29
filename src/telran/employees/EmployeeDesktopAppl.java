@@ -11,7 +11,9 @@ public class EmployeeDesktopAppl {
 
 	public static void main(String[] args) {
 		InputOutput io = new StandardInputOutput();
-		Company company = new CompanyImpl();
+		
+		Company company = new CompanyImpl(); //local application
+		
 		company.restore(FILE_PATH);
 		Item[] companyItems = CompanyControllerItems.getCompanyItems
 				(company, new String[] {"QA", "Development", "Audit",

@@ -23,6 +23,8 @@ public class CompanyControllerItems {
 		return new Menu("Administrative operations",
 			of("Add employee", this::addEmployee),
 			of("Remove employee", this::removeEmployee), 
+			of("Update salary", this::updateSalary),
+			of("Update department", this::updateDepartment),
 			of("Save company", this::saveCompany),
 			of("Restore company", this::restoreCompany),
 			exit());
@@ -44,6 +46,19 @@ public class CompanyControllerItems {
 		if (removedEmployee == null) {io.writeLine("no such employee");}
 		else {io.writeLine(removedEmployee);}		
 	}
+	
+	void updateSalary(InputOutput io) {
+		long id = io.readInt("Enter ID for update salary", "must be a number", 0, Integer.MAX_VALUE);
+		int newSalary = io.readInt("Enter new salary", "must be a positive number", 0, Integer.MAX_VALUE);
+		proxy.updateSalary(id, newSalary);		
+	}
+	
+	void updateDepartment(InputOutput io) {
+		long id = io.readInt("Enter ID for update department", "must be a number", 0, Integer.MAX_VALUE);
+		String department = io.readString("Enter the department");
+		proxy.updateDepartment(id, department);
+	}
+	
 void saveCompany(InputOutput io) {
 	Predicate<String> fileName = s -> s.matches("[\\w]+\\.[\\w]{1,4}"); 
 	String filePath = io.readStringPredicate("Enter file name", "Must be a file name", fileName);

@@ -79,5 +79,15 @@ public class CompanyNetProxy implements Company, Closeable {
 		client.close();
 		
 	}
+	@Override
+	public void updateSalary(long emplId, int newSalary) {
+		client.send("updateSalary", new Object[] {emplId, newSalary});
+		
+	}
+	@Override
+	public void updateDepartment(long emplId, String department) {
+		client.send("updateDepartment", new Object[] {emplId, department});
+		
+	}
 
 }

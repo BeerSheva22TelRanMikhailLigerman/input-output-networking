@@ -13,9 +13,9 @@ public class CompanyImpl implements Company {
 	private HashMap<String, Set<Employee>> employeesDepartment = new HashMap<>();
 	private TreeMap<Integer, Set<Employee>> employeesSalary = new TreeMap<>();
 	
-	ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	Lock readLock = lock.readLock();
-	Lock writeLock = lock.writeLock();
+//	ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+//	Lock readLock = lock.readLock();
+//	Lock writeLock = lock.writeLock(); 	 doesn't work
 	
 	@Override
 	public Iterator<Employee> iterator() {		
@@ -25,7 +25,7 @@ public class CompanyImpl implements Company {
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res = false;
-		writeLock.lock();
+		//writeLock.lock();
 		if (addEmpl(empl)) {			
 			addIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
 			addIndexMap(employeesDepartment, empl.getDepartment(), empl);
@@ -37,23 +37,23 @@ public class CompanyImpl implements Company {
 
 	private boolean addEmpl(Employee empl) {
 		boolean res = false;
-		writeLock.lock();
+		//writeLock.lock();
 		try {
 			if (employees.putIfAbsent(empl.id, empl) == null) {
 				res = true;
 			} 
 		} finally {
-			writeLock.unlock();
+			//writeLock.unlock();
 		}
 		return res;
 	}
 
 	private <T> void addIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
-		writeLock.lock();
+		//writeLock.lock();
 		try {
 			map.computeIfAbsent(key, k -> new HashSet<>()).add(empl);
 		} finally {
-			writeLock.unlock();
+			//writeLock.unlock();
 		}
 		
 	}
@@ -61,11 +61,11 @@ public class CompanyImpl implements Company {
 	@Override
 	public Employee removeEmployee(long id) {
 		Employee empl;
-		writeLock.lock();
+		//writeLock.lock();
 		try {
 			empl = employees.remove(id);
 		} finally {
-			writeLock.unlock();
+			//writeLock.unlock();
 		} 
 		if (empl != null) {
 			removeIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
@@ -76,7 +76,7 @@ public class CompanyImpl implements Company {
 	}
 
 	private <T>void removeIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
-		writeLock.lock();		
+		//writeLock.lock();		
 		try {
 			Set<Employee> set = map.get(key);
 			set.remove(empl);
@@ -84,18 +84,18 @@ public class CompanyImpl implements Company {
 				map.remove(key);
 			} 
 		} finally {
-			writeLock.unlock();
+			//writeLock.unlock();
 		}		
 	}
 
 	@Override
 	public List<Employee> getAllEmployees() {	
 		List<Employee> res;
-		readLock.lock();
+		//readLock.lock();
 		try {
 			res = new ArrayList<>(employees.values());
 		} finally {
-			readLock.unlock();
+		//	readLock.unlock();
 		}
 		return res;
 	}
@@ -103,11 +103,11 @@ public class CompanyImpl implements Company {
 	@Override
 	public List<Employee> getEmployeesByMonthBirth(int month) {	
 		List<Employee> res;
-		readLock.lock();
+		//readLock.lock();
 		try {
 			res = new ArrayList<>(employeesMonth.getOrDefault(month, Collections.emptySet()));
 		} finally {
-			readLock.unlock();
+		//	readLock.unlock();
 		}
 		return res;
 	}
@@ -115,12 +115,12 @@ public class CompanyImpl implements Company {
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {		
 		List<Employee> res;
-		readLock.lock();
+		//readLock.lock();
 		try {
 			res = employeesSalary.subMap(salaryFrom, true, salaryTo, true).values().stream().flatMap(Set::stream)
 					.toList();
 		} finally {
-			readLock.unlock();
+		//	readLock.unlock();
 		}
 		return res;
 	}
@@ -128,11 +128,11 @@ public class CompanyImpl implements Company {
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
 		List<Employee> res;
-		readLock.lock();
+		//readLock.lock();
 		try {
 			res = new ArrayList<>(employeesDepartment.getOrDefault(department, Collections.emptySet()));
 		} finally {
-			readLock.unlock();
+		//	readLock.unlock();
 		}
 		return res;
 	}
@@ -140,11 +140,11 @@ public class CompanyImpl implements Company {
 	@Override
 	public Employee getEmployee(long id) {	
 		Employee res;
-		readLock.lock();
+		//readLock.lock();
 		try {
 			res = employees.get(id);
 		} finally {
-			readLock.unlock();
+		//	readLock.unlock();
 		}
 		return res;
 	}

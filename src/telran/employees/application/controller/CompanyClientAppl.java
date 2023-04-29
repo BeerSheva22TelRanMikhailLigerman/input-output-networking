@@ -1,13 +1,10 @@
 package telran.employees.application.controller;
-import telran.employees.*;
 import telran.employees.net.*;
 import telran.net.*;
 import telran.view.InputOutput;
 import telran.view.Item;
 import telran.view.Menu;
 import telran.view.StandardInputOutput;
-import telran.view.test.DatesOperationsMenu;
-import telran.view.test.NumbersOperationsMenu;
 //HW 45 my
 //Client part
 public class CompanyClientAppl {
